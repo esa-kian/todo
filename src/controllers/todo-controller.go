@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"todo/src/config"
 	"todo/src/models"
 
@@ -71,6 +73,44 @@ func AllTodos(context *gin.Context) {
 }
 
 func UpdateTodo(context *gin.Context) {
+	var data todoRequest
+
+	reqParamId := context.Param("idTodo")
+	idTodo, err := strconv.ParseUint(reqParamId, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if err := context.BindJSON(&data); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	todo := models.Todo{}
+
+	todoById := db.Where("id = ?", idTodo).First(&todo)
+
+	if todoById.Error != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Todo not found"})
+		return
+	}
+
+	todo.Name = data.Name
+	todo.Description = data.Description
+
+	result := db.Save(&todo)
+
+	if result.Error != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Something went wrong"})
+		return
+	}
+
+	var response todoResponse
+	response.ID = todo.ID
+	response.Name = todo.Name
+	response.Description = todo.Description
+
+	context.JSON(http.StatusCreated, response)
 
 }
 
