@@ -115,5 +115,21 @@ func UpdateTodo(context *gin.Context) {
 }
 
 func DeleteTodo(context *gin.Context) {
+	todo := models.Todo{}
 
+	reqParamId := context.Param("idTodo")
+	idTodo, err := strconv.ParseUint(reqParamId, 10, 32)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	delete := db.Where("id = ?", idTodo).Unscoped().Delete(&todo)
+	fmt.Println(delete)
+
+	context.JSON(http.StatusOK, gin.H{
+		"status":  "200",
+		"message": "Success",
+		"data":    idTodo,
+	})
 }
