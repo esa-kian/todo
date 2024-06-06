@@ -54,7 +54,7 @@ func CreateTodo(context *gin.Context) {
 func AllTodos(context *gin.Context) {
 	var todos []models.Todo
 
-	err := db.Find(*&todos)
+	err := db.Find(&todos)
 
 	if err.Error != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Error getting data"})
