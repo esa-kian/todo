@@ -12,6 +12,13 @@ var (
 )
 
 func main() {
+	type Todo struct {
+		gorm.Model
+		Name        string
+		Description string
+	}
+	db.AutoMigrate(&Todo{})
+
 	defer config.DisconnectDB(db)
 
 	routes.Routes()

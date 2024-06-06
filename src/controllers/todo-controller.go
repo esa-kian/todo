@@ -37,7 +37,7 @@ func CreateTodo(context *gin.Context) {
 	result := db.Create(&todo)
 
 	if result.Error != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Something went wrong"})
+		context.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
 		return
 	}
 
